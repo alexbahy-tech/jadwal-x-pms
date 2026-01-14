@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Pelajaran X Pemasaran - SMKN 1 Maluku Tengah</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --bg-gradient-1: #667eea;
+            --bg-gradient-2: #764ba2;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-600: #475569;
+            --gray-900: #0f172a;
+        }
+
+        /* Reset & Base Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            background-attachment: fixed;
+            color: var(--gray-900);
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* Header & Info Bar */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: white;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header h1 { font-size: 1.8rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        header p { font-size: 1.3rem; font-weight: 800; letter-spacing: 2px; }
+
+        .info-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 220px;
+            transition: transform 0.3s ease;
+        }
+        .info-card:hover { transform: translateY(-3px); }
+
+        /* Style khusus untuk mapel aktif di atas */
+        .info-card.active-lesson {
+            border: 2px solid var(--accent);
+            background: #fffbeb;
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { border-color: var(--accent); }
+            50% { border-color: transparent; }
+            100% { border-color: var(--accent); }
+        }
+
+        .info-icon { font-size: 1.5rem; }
+        .info-text h3 { font-size: 0.75rem; color: var(--gray-600); text-transform: uppercase; }
+        .info-text p { font-size: 1.1rem; color: var(--gray-900); font-weight: 700; }
+        .info-text small { font-weight: 400; color: var(--gray-600); }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        select, input {
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        select:focus, input:focus { border-color: var(--primary-light); }
+
+        .btn-print {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            background: var(--gray-900);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-print:hover { background: black; transform: scale(1.05); }
+
+        /* Schedule Grid & Columns */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .day-column {
+            background: rgba(241, 245, 249, 0.9);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .day-header {
+            padding: 15px;
+            text-align: center;
+            color: white;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .senin { background: #4f46e5; }
+        .selasa { background: #0891b2; }
+        .rabu { background: #059669; }
+        .kamis { background: #d97706; }
+        .jumat { background: #be185d; }
+
+        .day-content { padding: 15px; }
+
+        /* Cards & Animations */
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 6px solid var(--primary);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            animation: fadeInSlide 0.5s ease forwards;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-left-width: 10px;
+        }
+
+        .card.istirahat {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+        .card.istirahat:hover { background: #fffbeb; }
+
+        .card.active {
+            background: #e0e7ff;
+            border-color: #4338ca;
+            animation: pulse-glow 2s infinite;
+            transform: scale(1.02);
+            z-index: 1;
+        }
+
+        .time { font-size: 0.85rem; font-weight: 800; color: var(--primary); display: block; margin-bottom: 5px; }
+        .subject { font-size: 1rem; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; line-height: 1.2; }
+        .teacher { font-size: 0.85rem; color: var(--gray-600); font-style: italic; }
+
+        .badge-now {
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            float: right;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media print {
+            .controls, header p, .badge-now, #top-active-card { display: none; }
+            body { background: white; padding: 0; }
+            .day-column { box-shadow: none; border: 1px solid #ccc; margin-bottom: 20px; }
+            .card { break-inside: avoid; border: 1px solid #eee; border-left: 6px solid #444; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Jadwal Pelajaran X Pemasaran</h1>
+        <p>SMK NEGERI 1 MALUKU TENGAH</p>
+    </header>
+
+    <div class="info-bar">
+        <div class="info-card">
+            <span class="info-icon">🕒</span>
+            <div class="info-text">
+                <h3>Waktu Saat Ini</h3>
+                <p id="current-time">00:00:00</p>
+            </div>
+        </div>
+        <div class="info-card">
+            <span class="info-icon">📅</span>
+            <div class="info-text">
+                <h3>Hari</h3>
+                <p id="current-day">-</p>
+            </div>
+        </div>
+        <div class="info-card active-lesson" id="top-active-card" style="display: none;">
+            <span class="info-icon">📖</span>
+            <div class="info-text">
+                <h3>Sedang Berlangsung</h3>
+                <p id="top-active-subject">-</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <select id="filter-day">
+            <option value="all">Semua Hari</option>
+            <option value="Sen">Senin</option>
+            <option value="Sel">Selasa</option>
+            <option value="Rab">Rabu</option>
+            <option value="Kam">Kamis</option>
+            <option value="Jum">Jumat</option>
+        </select>
+        <input type="text" id="search-input" placeholder="Cari Pelajaran atau Guru...">
+        <button class="btn-print" onclick="window.print()">Cetak PDF</button>
+    </div>
+
+    <div id="grid-container" class="schedule-grid"></div>
+</div>
+
+<script>
+const rawData = {
+    "schedule": [
+        // SENIN
+        { "day": "Sen", "time": "07:30 - 10:10", "subject": "DPK PMS (Wawasan Dunia Kerja)", "teacher": "H. Salampessy, SE" },
+        { "day": "Sen", "time": "10:10 - 10:30", "subject": "ISTIRAHAT 1", "teacher": "-", "type": "break" },
+        { "day": "Sen", "time": "10:30 - 11:50", "subject": "Bahasa Inggris", "teacher": "Ch. Elias, S.Pd., M.Pd" },
+        { "day": "Sen", "time": "11:50 - 13:10", "subject": "Muatan Lokal (Membatik)", "teacher": "J. Resiloy" },
+        { "day": "Sen", "time": "13:10 - 13:30", "subject": "ISTIRAHAT 2", "teacher": "-", "type": "break" },
+        { "day": "Sen", "time": "13:30 - 15:30", "subject": "Muatan Lokal (Membatik)", "teacher": "J. Resiloy" },
+
+        // SELASA
+        { "day": "Sel", "time": "07:30 - 10:10", "subject": "Kokurikuler PJBL / Seni Musik", "teacher": "B.W. Tanamal / R.A. Ririhena" },
+        { "day": "Sel", "time": "10:10 - 10:30", "subject": "ISTIRAHAT 1", "teacher": "-", "type": "break" },
+        { "day": "Sel", "time": "10:30 - 11:50", "subject": "Bahasa Indonesia", "teacher": "Suharja Duhalim, S.Pd" },
+        { "day": "Sel", "time": "11:50 - 13:10", "subject": "Sejarah / Informatika", "teacher": "V. Ruhukail / S. Pattiradjawane" },
+        { "day": "Sel", "time": "13:10 - 13:30", "subject": "ISTIRAHAT 2", "teacher": "-", "type": "break" },
+        { "day": "Sel", "time": "13:30 - 15:30", "subject": "Informatika (Lanjutan)", "teacher": "S. Pattiradjawane" },
+
+        // RABU
+        { "day": "Rab", "time": "07:30 - 10:10", "subject": "Penjasorkes / Kokurikuler PJBL", "teacher": "O.A. Lawalata / B.W. Tanamal" },
+        { "day": "Rab", "time": "10:10 - 10:30", "subject": "ISTIRAHAT 1", "teacher": "-", "type": "break" },
+        { "day": "Rab", "time": "10:30 - 11:50", "subject": "Pendidikan Pancasila", "teacher": "E.A. Wacanno, S.Pd" },
+        { "day": "Rab", "time": "11:50 - 13:10", "subject": "DPK PMS (Kecakapan Kerja)", "teacher": "Kalsum Mony, S.Pd" },
+        { "day": "Rab", "time": "13:10 - 13:30", "subject": "ISTIRAHAT 2", "teacher": "-", "type": "break" },
+        { "day": "Rab", "time": "13:30 - 15:30", "subject": "DPK PMS (Lanjutan)", "teacher": "Kalsum Mony, S.Pd" },
+
+        // KAMIS
+        { "day": "Kam", "time": "07:30 - 10:10", "subject": "DPK PMS (K3 & Budaya Kerja)", "teacher": "D. Simaela, S.Pd" },
+        { "day": "Kam", "time": "10:10 - 10:30", "subject": "ISTIRAHAT 1", "teacher": "-", "type": "break" },
+        { "day": "Kam", "time": "10:30 - 11:50", "subject": "Matematika", "teacher": "R. E. Ruhukail, S.Pd., M.Pd" },
+        { "day": "Kam", "time": "11:50 - 13:10", "subject": "Projek IPAS", "teacher": "Boki Tuasikal, S.Pd" },
+        { "day": "Kam", "time": "13:10 - 13:30", "subject": "ISTIRAHAT 2", "teacher": "-", "type": "break" },
+        { "day": "Kam", "time": "13:30 - 14:50", "subject": "Projek IPAS (Lanjutan)", "teacher": "Boki Tuasikal, S.Pd" },
+
+        // JUMAT
+        { "day": "Jum", "time": "07:30 - 10:10", "subject": "Pendidikan Agama (PAI/PAK)", "teacher": "Djurniaty / F.L. Pelletimu" },
+        { "day": "Jum", "time": "10:10 - 10:30", "subject": "ISTIRAHAT 1", "teacher": "-", "type": "break" },
+        { "day": "Jum", "time": "10:30 - 11:50", "subject": "Projek IPAS", "teacher": "Boki Tuasikal, S.Pd" }
+    ]
+};
+
+function checkActive(timeStr, dayAbbr) {
+    const now = new Date();
+    const daysMap = { 'Sen': 1, 'Sel': 2, 'Rab': 3, 'Kam': 4, 'Jum': 5 };
+    if (now.getDay() !== daysMap[dayAbbr]) return false;
+    
+    const [start, end] = timeStr.split(' - ');
+    const parse = (t) => {
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+    };
+    const current = now.getHours() * 60 + now.getMinutes();
+    return current >= parse(start) && current <= parse(end);
+}
+
+function render() {
+    const container = document.getElementById('grid-container');
+    const filter = document.getElementById('filter-day').value;
+    const search = document.getElementById('search-input').value.toLowerCase();
+    
+    container.innerHTML = '';
+    const days = filter === 'all' ? ['Sen', 'Sel', 'Rab', 'Kam', 'Jum'] : [filter];
+
+    days.forEach((d, dayIndex) => {
+        const dayItems = rawData.schedule.filter(i => 
+            i.day === d && (i.subject.toLowerCase().includes(search) || i.teacher.toLowerCase().includes(search))
+        );
+
+        if (dayItems.length > 0) {
+            const dayName = { Sen: 'Senin', Sel: 'Selasa', Rab: 'Rabu', Kam: 'Kamis', Jum: 'Jumat' }[d];
+            const col = document.createElement('div');
+            col.className = 'day-column';
+            col.style.animationDelay = `${dayIndex * 0.1}s`;
+            
+            col.innerHTML = `<div class="day-header ${dayName.toLowerCase()}">${dayName}</div><div class="day-content"></div>`;
+            
+            dayItems.forEach((item, itemIndex) => {
+                const isActive = checkActive(item.time, item.day);
+                const card = document.createElement('div');
+                card.className = `card ${item.type === 'break' ? 'istirahat' : ''} ${isActive ? 'active' : ''}`;
+                
+                card.style.animationDelay = `${(dayIndex * 0.2) + (itemIndex * 0.05)}s`;
+                
+                card.innerHTML = `
+                    <span class="time">🕒 ${item.time} ${isActive ? '<span class="badge-now">AKTIF SEKARANG</span>' : ''}</span>
+                    <div class="subject">${item.subject}</div>
+                    <div class="teacher">${item.teacher}</div>
+                `;
+                col.querySelector('.day-content').appendChild(card);
+            });
+            container.appendChild(col);
+        }
+    });
+}
+
+function updateClock() {
+    const now = new Date();
+    document.getElementById('current-time').textContent = now.toLocaleTimeString('id-ID');
+    const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    document.getElementById('current-day').textContent = dayNames[now.getDay()];
+
+    // LOGIKA UPDATE MAPEL AKTIF DI ATAS
+    const activeLesson = rawData.schedule.find(item => checkActive(item.time, item.day));
+    const topCard = document.getElementById('top-active-card');
+    const topSubject = document.getElementById('top-active-subject');
+
+    if (activeLesson) {
+        topCard.style.display = 'flex';
+        let displayText = activeLesson.subject;
+        if (activeLesson.teacher !== "-") {
+            displayText += `<br><small>Bersama: ${activeLesson.teacher}</small>`;
+        }
+        topSubject.innerHTML = displayText;
+    } else {
+        topCard.style.display = 'none';
+    }
+    
+    if (now.getSeconds() === 0) render();
+}
+
+setInterval(updateClock, 1000);
+document.getElementById('filter-day').addEventListener('change', render);
+document.getElementById('search-input').addEventListener('input', render);
+
+// Initial Load
+updateClock();
+render();
+</script>
+</body>
+</html>
