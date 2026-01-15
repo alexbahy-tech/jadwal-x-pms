@@ -28,7 +28,7 @@
         body {
             background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
             background-attachment: fixed;
             color: var(--gray-900);
         }
@@ -54,15 +54,20 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        header h1 { font-size: 1.8rem; margin-bottom: 5px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
-        header p { font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; opacity: 0.9; }
+        header h1 { font-size: 1.6rem; margin-bottom: 5px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        header p { font-size: 1rem; font-weight: 800; letter-spacing: 1px; }
 
-        /* Info Bar - Responsive Grid */
+        /* Info Bar - Perbaikan Utama Responsivitas */
         .info-bar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 15px;
             margin-bottom: 25px;
+        }
+
+        /* Khusus di HP agar tidak terlalu lebar */
+        @media (max-width: 480px) {
+            .info-bar { grid-template-columns: 1fr; }
         }
 
         .info-card {
@@ -80,7 +85,6 @@
             border: 2px solid var(--accent);
             background: #fffbeb;
             animation: pulse-border 2s infinite;
-            grid-column: span 1; /* Default */
         }
 
         @keyframes pulse-border {
@@ -90,29 +94,27 @@
         }
 
         .info-icon { font-size: 1.5rem; }
-        .info-text h3 { font-size: 0.7rem; color: var(--gray-600); text-transform: uppercase; margin-bottom: 2px; }
-        .info-text p { font-size: 1rem; color: var(--gray-900); font-weight: 700; line-height: 1.2; }
-        .info-text small { font-weight: 400; color: var(--gray-600); font-size: 0.8rem; }
+        .info-text h3 { font-size: 0.75rem; color: var(--gray-600); text-transform: uppercase; }
+        .info-text p { font-size: 1.05rem; color: var(--gray-900); font-weight: 700; line-height: 1.2; }
 
         /* Controls */
         .controls {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 30px;
             justify-content: center;
             flex-wrap: wrap;
         }
 
         select, input {
-            padding: 12px 15px;
+            padding: 12px 20px;
             border-radius: 12px;
             border: 2px solid transparent;
             background: white;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             font-weight: 600;
             outline: none;
-            flex: 1;
-            min-width: 200px;
+            transition: all 0.3s ease;
         }
 
         .btn-print {
@@ -123,7 +125,6 @@
             color: white;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
 
         /* Schedule Grid */
@@ -147,7 +148,6 @@
             color: white;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .senin { background: #4f46e5; }
@@ -165,60 +165,41 @@
             margin-bottom: 12px;
             border-left: 6px solid var(--primary);
             position: relative;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
         }
 
         .card.active {
             background: #e0e7ff;
             border-color: #4338ca;
             transform: scale(1.02);
-            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.2);
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .card.istirahat { background: #fef3c7; border-left-color: #f59e0b; }
 
-        .time { font-size: 0.8rem; font-weight: 800; color: var(--primary); display: block; margin-bottom: 5px; }
-        .subject { font-size: 0.95rem; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
-        .teacher { font-size: 0.8rem; color: var(--gray-600); font-style: italic; }
+        .time { font-size: 0.85rem; font-weight: 800; color: var(--primary); display: block; margin-bottom: 5px; }
+        .subject { font-size: 1rem; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
+        .teacher { font-size: 0.85rem; color: var(--gray-600); font-style: italic; }
 
         .badge-now {
             background: var(--accent);
             color: white;
             padding: 2px 8px;
             border-radius: 20px;
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             font-weight: 800;
             float: right;
         }
 
-        /* MEDIA QUERIES UNTUK HP */
-        @media (max-width: 600px) {
-            body { padding: 10px; }
-            
-            header { padding: 20px 10px; border-radius: 16px; }
-            header h1 { font-size: 1.3rem; }
-            header p { font-size: 0.9rem; }
-
-            .info-bar {
-                grid-template-columns: 1fr; /* Kartu menumpuk vertikal di HP */
-            }
-
-            .info-card.active-lesson {
-                order: -1; /* Memaksa kartu "Sedang Berlangsung" paling atas di HP */
-            }
-
-            .controls { flex-direction: column; }
-            select, input, .btn-print { width: 100%; min-width: unset; }
-
-            .schedule-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 768px) {
+            .schedule-grid { grid-template-columns: 1fr; }
+            select, input { width: 100%; }
         }
 
         @media print {
-            .controls, .badge-now, #top-active-card { display: none; }
-            body { background: white; padding: 0; }
-            .day-column { break-inside: avoid; margin-bottom: 20px; }
+            .controls, #top-active-card { display: none; }
+            body { background: white; }
         }
     </style>
 </head>
@@ -273,6 +254,7 @@
 <script>
 const rawData = {
     "schedule": [
+        // SENIN
         { "day": "Sen", "time": "07:30 - 10:10", "subject": "DPK PMS (Wawasan Dunia Kerja)", "teacher": "H. Salampessy, SE" },
         { "day": "Sen", "time": "10:10 - 10:30", "subject": "ISTIRAHAT 1", "teacher": "-", "type": "break" },
         { "day": "Sen", "time": "10:30 - 12:30", "subject": "Bahasa Inggris", "teacher": "Ch. Elias, S.Pd., M.Pd" },
@@ -280,6 +262,7 @@ const rawData = {
         { "day": "Sen", "time": "13:10 - 13:30", "subject": "ISTIRAHAT 2", "teacher": "-", "type": "break" },
         { "day": "Sen", "time": "13:30 - 15:30", "subject": "Muatan Lokal (Membatik)", "teacher": "J. Resiloy" },
 
+        // SELASA
         { "day": "Sel", "time": "07:30 - 08:50", "subject": "Seni Musik", "teacher": "R.A. Ririhena" },
         { "day": "Sel", "time": "08:50 - 10:10", "subject": "Kokurikuler PJBL", "teacher": "B.W. Tanamal, S.Pd" },
         { "day": "Sel", "time": "10:10 - 10:30", "subject": "ISTIRAHAT 1", "teacher": "-", "type": "break" },
@@ -288,6 +271,7 @@ const rawData = {
         { "day": "Sel", "time": "13:10 - 13:30", "subject": "ISTIRAHAT 2", "teacher": "-", "type": "break" },
         { "day": "Sel", "time": "13:30 - 15:30", "subject": "Informatika", "teacher": "S. Pattiradjawane" },
 
+        // RABU
         { "day": "Rab", "time": "07:30 - 08:50", "subject": "Kokurikuler PJBL", "teacher": "B.W. Tanamal, S.Pd" },
         { "day": "Rab", "time": "08:50 - 10:10", "subject": "Penjasorkes", "teacher": "O.A. Lawalata, S.Pd" },
         { "day": "Rab", "time": "10:10 - 10:30", "subject": "ISTIRAHAT 1", "teacher": "-", "type": "break" },
@@ -297,6 +281,7 @@ const rawData = {
         { "day": "Rab", "time": "13:10 - 13:30", "subject": "ISTIRAHAT 2", "teacher": "-", "type": "break" },
         { "day": "Rab", "time": "13:30 - 15:30", "subject": "DPK PMS (Lanjutan)", "teacher": "Kalsum Mony, S.Pd" },
 
+        // KAMIS
         { "day": "Kam", "time": "07:30 - 10:10", "subject": "DPK PMS (K3 & Budaya Kerja)", "teacher": "D. Simaela, S.Pd" },
         { "day": "Kam", "time": "10:10 - 10:30", "subject": "ISTIRAHAT 1", "teacher": "-", "type": "break" },
         { "day": "Kam", "time": "10:30 - 12:30", "subject": "Matematika", "teacher": "R. E. Ruhukail, S.Pd., M.Pd" },
@@ -304,7 +289,8 @@ const rawData = {
         { "day": "Kam", "time": "13:10 - 13:30", "subject": "ISTIRAHAT 2", "teacher": "-", "type": "break" },
         { "day": "Kam", "time": "13:30 - 14:50", "subject": "Projek IPAS (Lanjutan)", "teacher": "Boki Tuasikal, S.Pd" },
 
-        { "day": "Jum", "time": "07:30 - 10:10", "subject": "Pendidikan Agama (PAI/PAK)", "teacher": "Djurniaty / F.L. Pelletimu" },
+        // JUMAT
+        { "day": "Jum", "time": "07:30 - 10:10", "subject": "Pendidikan Agama", "teacher": "Djurniaty / F.L. Pelletimu" },
         { "day": "Jum", "time": "10:10 - 10:30", "subject": "ISTIRAHAT 1", "teacher": "-", "type": "break" },
         { "day": "Jum", "time": "10:30 - 11:50", "subject": "Projek IPAS", "teacher": "Boki Tuasikal, S.Pd" }
     ]
@@ -363,8 +349,7 @@ function updateClock() {
     const now = new Date();
     document.getElementById('current-time').textContent = now.toLocaleTimeString('id-ID');
     const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-    const currentDayName = dayNames[now.getDay()];
-    document.getElementById('current-day').textContent = currentDayName;
+    document.getElementById('current-day').textContent = dayNames[now.getDay()];
 
     const activeLesson = rawData.schedule.find(item => checkActive(item.time, item.day));
     const topCard = document.getElementById('top-active-card');
@@ -380,8 +365,6 @@ function updateClock() {
     } else {
         topCard.style.display = 'none';
     }
-    
-    if (now.getSeconds() === 0) render();
 }
 
 setInterval(updateClock, 1000);
